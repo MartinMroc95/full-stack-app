@@ -42,3 +42,9 @@ yarn-error.log*
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
