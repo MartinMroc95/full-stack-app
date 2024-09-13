@@ -1,17 +1,18 @@
-import { Flex } from '@chakra-ui/react'
+import { ReactElement } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
+import Layout from 'components/Layout'
+import Main from 'routes/Main'
+import { NextPageWithLayout } from './_app'
 
-const Home = () => (
+const MainPage: NextPageWithLayout = () => (
   <>
     <Head>
-      <title>Create Next App</title>
+      <title>Main page</title>
     </Head>
-    <Flex align="center" justify="center" w="full" h="full" p="20px">
-      NextJS App
-    </Flex>
-    <Link href="./page">Home page</Link>
+    <Main />
   </>
 )
 
-export default Home
+MainPage.getLayout = (page: ReactElement) => <Layout>{page}</Layout>
+
+export default MainPage
