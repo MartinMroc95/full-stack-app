@@ -8,6 +8,17 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["chakra-ui", "import"],
   "ignorePatterns": ["next.config.js", "*.config.js"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".svg", ".d.ts"]
+      },
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
+    }
+  },
   "rules": {
     "react/function-component-definition": [
       "error",
