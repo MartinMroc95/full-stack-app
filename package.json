@@ -22,7 +22,7 @@
     "framer-motion": "^11.2.4",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.7.0",
-    "next": "14.2.3",
+    "next": "14.2.10",
     "next-nprogress-bar": "^2.3.12",
     "react": "^18",
     "react-dom": "^18",
