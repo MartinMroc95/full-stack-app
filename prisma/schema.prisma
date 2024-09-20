@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -20,7 +24,7 @@ model User {
   email      String   @unique
   image      String?
   role       Role     @default(USER)
-  bookmars   Link[]
+  bookmarks  Link[]
 }
 
 enum Role {
@@ -34,7 +38,8 @@ model Link {
   updateddAt  DateTime @default(now())
   title       String
   description String
-  ulr         String
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      String?
+  url         String
+  category    String?
+  imageUrl    String?
+  users       User[]
 }

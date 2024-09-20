@@ -20,7 +20,7 @@ CREATE TABLE "Link" (
     "updateddAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "ulr" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
     "userId" TEXT,
 
     CONSTRAINT "Link_pkey" PRIMARY KEY ("id")
