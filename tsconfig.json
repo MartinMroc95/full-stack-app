@@ -18,7 +18,8 @@
     "rootDir": ".",
     "paths": {
       "components/*": ["components/*"],
-      "data/*": ["data/*"]
+      "data/*": ["data/*"],
+      "@pothos/plugin-prisma/generated": ["./node_modules/@pothos/plugin-prisma/generated"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

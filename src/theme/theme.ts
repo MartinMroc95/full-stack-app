@@ -8,7 +8,6 @@ const globalStyles: Styles = {
       scrollBehavior: 'smooth',
     },
     body: {
-      background: 'brand.purple.50',
       minHeight: '100vh',
       minWidth: '320px',
       overflowWrap: 'break-word',
@@ -27,7 +26,6 @@ const globalStyles: Styles = {
 
 const customTheme = {
   styles: globalStyles,
-
   initialColorMode: 'light',
   useSystemColorMode: false,
 }

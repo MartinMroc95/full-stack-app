@@ -14,8 +14,9 @@ builder.prismaObject('Link', {
 })
 
 builder.queryField('links', (t) =>
-  t.prismaField({
-    type: ['Link'],
+  t.prismaConnection({
+    type: 'Link',
+    cursor: 'id',
     resolve: (query) => prisma.link.findMany({ ...query }),
   })
 )
