@@ -1,5 +1,6 @@
 import React from 'react'
-import { HStack, Text } from '@chakra-ui/react'
+import { HStack } from '@chakra-ui/react'
+import Link from 'next/link'
 
 interface Props {
   children: React.ReactNode
@@ -16,7 +17,7 @@ export const Layout: React.FC<Props> = ({ children }) => (
       borderRadius="0px 25px 25px 0px"
       bgColor="wheat"
     >
-      <Text color="black">SideBar</Text>
+      <Link href="/api/auth/logout">Logout</Link>
     </HStack>
     {children}
   </HStack>

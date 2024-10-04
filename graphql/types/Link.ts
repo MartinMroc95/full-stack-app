@@ -20,3 +20,41 @@ builder.queryField('links', (t) =>
     resolve: (query) => prisma.link.findMany({ ...query }),
   })
 )
+
+builder.mutationField('createLink', (t) =>
+  t.prismaField({
+    type: 'Link',
+    args: {
+      // userIds: t.arg({ type: ['String'], required: true }),
+      title: t.arg.string({ required: true }),
+      description: t.arg.string({ required: true }),
+      url: t.arg.string({ required: true }),
+      imageUrl: t.arg.string({ required: true }),
+      category: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { title, description, url, imageUrl, category } = args
+
+      if (!(await ctx).user) {
+        throw new Error('You have to be logged in to perform this action')
+      }
+
+      return prisma.link.create({
+        ...query,
+        data: {
+          // users: {
+          //   connect: userIds.map((id) => ({ id })),
+          // },
+          title,
+          description,
+          url,
+          imageUrl,
+          category,
+        },
+        include: {
+          users: true, // Zahrnúť používateľov do odpovede
+        },
+      })
+    },
+  })
+)
