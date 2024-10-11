@@ -25,7 +25,6 @@ builder.mutationField('createLink', (t) =>
   t.prismaField({
     type: 'Link',
     args: {
-      // userIds: t.arg({ type: ['String'], required: true }),
       title: t.arg.string({ required: true }),
       description: t.arg.string({ required: true }),
       url: t.arg.string({ required: true }),
@@ -34,17 +33,18 @@ builder.mutationField('createLink', (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { title, description, url, imageUrl, category } = args
+      const { user } = await ctx
 
-      if (!(await ctx).user) {
+      if (!user) {
         throw new Error('You have to be logged in to perform this action')
       }
 
       return prisma.link.create({
         ...query,
         data: {
-          // users: {
-          //   connect: userIds.map((id) => ({ id })),
-          // },
+          users: {
+            connect: [{ id: user.id }],
+          },
           title,
           description,
           url,
@@ -52,7 +52,7 @@ builder.mutationField('createLink', (t) =>
           category,
         },
         include: {
-          users: true, // Zahrnúť používateľov do odpovede
+          users: true,
         },
       })
     },
