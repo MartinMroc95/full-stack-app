@@ -9,7 +9,7 @@ builder.prismaObject('Link', {
     description: t.exposeString('description'),
     imageUrl: t.exposeString('imageUrl'),
     category: t.exposeString('category'),
-    userId: t.relation('user'),
+    userId: t.relation('User'),
   }),
 })
 
