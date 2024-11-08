@@ -33,6 +33,10 @@ const AllLinksQuery = gql`
           category
           description
           id
+          userId {
+            id
+            email
+          }
         }
       }
     }
@@ -112,7 +116,7 @@ export const Main = () => {
         })
       }
     } catch (error) {
-      console.error(error)
+      console.log('error', error)
       toast({
         title: 'Error!',
         description: 'Something went wrong...',
@@ -132,15 +136,12 @@ export const Main = () => {
     )
   }
 
-  if (linksQueryError) {
-    return <Box>{linksQueryError.message}</Box>
-  }
-
   const { endCursor, hasNextPage } = data?.links.pageInfo || {}
 
   return (
     <VStack w="full" h="full">
       <Flex p="20px">NextJS App</Flex>
+      <Box>{linksQueryError?.message}</Box>
       <HStack flexWrap="wrap" gap="10px">
         {data?.links.edges.map(({ node }) => (
           <Card key={node.id}>

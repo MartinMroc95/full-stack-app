@@ -9,7 +9,7 @@ builder.prismaObject('Link', {
     description: t.exposeString('description'),
     imageUrl: t.exposeString('imageUrl'),
     category: t.exposeString('category'),
-    users: t.relation('users'),
+    userId: t.relation('user'),
   }),
 })
 
@@ -42,17 +42,12 @@ builder.mutationField('createLink', (t) =>
       return prisma.link.create({
         ...query,
         data: {
-          users: {
-            connect: [{ id: user.id }],
-          },
+          userId: user.id,
           title,
           description,
           url,
           imageUrl,
           category,
-        },
-        include: {
-          users: true,
         },
       })
     },

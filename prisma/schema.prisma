@@ -41,5 +41,6 @@ model Link {
   url         String
   category    String?
   imageUrl    String?
-  users       User[]
+  userId      String
+  User        User     @relation(fields: [userId], references: [id])
 }
