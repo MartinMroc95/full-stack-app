@@ -9,7 +9,7 @@ builder.prismaObject('Link', {
     description: t.exposeString('description'),
     imageUrl: t.exposeString('imageUrl'),
     category: t.exposeString('category'),
-    users: t.relation('users'),
+    userId: t.relation('user'),
   }),
 })
 
@@ -18,5 +18,38 @@ builder.queryField('links', (t) =>
     type: 'Link',
     cursor: 'id',
     resolve: (query) => prisma.link.findMany({ ...query }),
+  })
+)
+
+builder.mutationField('createLink', (t) =>
+  t.prismaField({
+    type: 'Link',
+    args: {
+      title: t.arg.string({ required: true }),
+      description: t.arg.string({ required: true }),
+      url: t.arg.string({ required: true }),
+      imageUrl: t.arg.string({ required: true }),
+      category: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { title, description, url, imageUrl, category } = args
+      const { user } = await ctx
+
+      if (!user) {
+        throw new Error('You have to be logged in to perform this action')
+      }
+
+      return prisma.link.create({
+        ...query,
+        data: {
+          userId: user.id,
+          title,
+          description,
+          url,
+          imageUrl,
+          category,
+        },
+      })
+    },
   })
 )

@@ -6,6 +6,7 @@ export const links = [
     imageUrl: 'https://github.com/vercel.png',
     title: 'Next.js',
     url: 'https://nextjs.org',
+    userId: 'kpZleRhQUgRnktjeyLBI3EVSFoWH1Ver',
   },
   {
     category: 'Open Source',
@@ -14,6 +15,7 @@ export const links = [
     imageUrl: 'https://github.com/prisma.png',
     title: 'Prisma',
     url: 'https://prisma.io',
+    userId: 'kpZleRhQUgRnktjeyLBI3EVSFoWH1Ver',
   },
   {
     category: 'Open Source',
@@ -22,6 +24,7 @@ export const links = [
     imageUrl: 'https://github.com/tailwindlabs.png',
     title: 'TailwindCSS',
     url: 'https://tailwindcss.com',
+    userId: 'kpZleRhQUgRnktjeyLBI3EVSFoWH1Ver',
   },
   {
     category: 'Open Source',
@@ -30,5 +33,6 @@ export const links = [
     imageUrl: 'https://www.apollographql.com/apollo-home.jpg',
     title: 'Apollo GraphQL',
     url: 'https://apollographql.com',
+    userId: 'kpZleRhQUgRnktjeyLBI3EVSFoWH1Ver',
   },
 ]

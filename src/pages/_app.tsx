@@ -1,6 +1,8 @@
 import { ReactElement, ReactNode } from 'react'
 import { ApolloProvider } from '@apollo/client'
+import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { ChakraProvider } from '@chakra-ui/react'
+import { AuthHandler } from 'handlers/AuthHandler'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { PagesProgressBar as ProgressBar } from 'next-nprogress-bar'
@@ -19,12 +21,16 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <ApolloProvider client={apolloClient}>
-      <ChakraProvider theme={theme}>
-        <ProgressBar height="4px" shallowRouting />
-        {getLayout(<Component {...pageProps} />)}
-      </ChakraProvider>
-    </ApolloProvider>
+    <UserProvider>
+      <AuthHandler>
+        <ApolloProvider client={apolloClient}>
+          <ChakraProvider theme={theme}>
+            <ProgressBar height="4px" shallowRouting />
+            {getLayout(<Component {...pageProps} />)}
+          </ChakraProvider>
+        </ApolloProvider>
+      </AuthHandler>
+    </UserProvider>
   )
 }
 
