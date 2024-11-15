@@ -1,4 +1,5 @@
 import { ReactElement } from 'react'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0'
 import Head from 'next/head'
 import Layout from 'components/Layout'
 import Main from 'routes/Main'
@@ -14,5 +15,7 @@ const MainPage: NextPageWithLayout = () => (
 )
 
 MainPage.getLayout = (page: ReactElement) => <Layout>{page}</Layout>
+
+export const getServerSideProps = withPageAuthRequired()
 
 export default MainPage
