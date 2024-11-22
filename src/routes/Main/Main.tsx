@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react'
 import type { Link } from '@prisma/client'
 
-const AllLinksQuery = gql`
+const GetUserLinksQuery = gql`
   query allLinksQuery($first: Int, $after: String) {
     links(first: $first, after: $after) {
       pageInfo {
@@ -84,12 +84,13 @@ type FormValues = {
 
 export const Main = () => {
   const toast = useToast()
+
   const {
     data,
     loading: isLinksQueryLoading,
     error: linksQueryError,
     fetchMore: fetchMoreLinks,
-  } = useQuery<LinkData>(AllLinksQuery, {
+  } = useQuery<LinkData>(GetUserLinksQuery, {
     variables: { first: 2 },
   })
 

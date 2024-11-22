@@ -17,7 +17,13 @@ builder.queryField('links', (t) =>
   t.prismaConnection({
     type: 'Link',
     cursor: 'id',
-    resolve: (query) => prisma.link.findMany({ ...query }),
+    resolve: async (query, _parent, _args, ctx) => {
+      const { user } = await ctx
+      return prisma.link.findMany({
+        ...query,
+        where: { userId: user?.id },
+      })
+    },
   })
 )
 
