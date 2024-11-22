@@ -2,11 +2,11 @@ import { handleAuth, handleCallback, handleLogin, handleLogout, Session } from '
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../../lib/prisma'
 
-function getUrls(req: NextApiRequest) {
-  const { host } = req.headers
+const getUrls = (req: NextApiRequest) => {
+  const { host = '' } = req.headers
   const protocol = process.env.VERCEL_URL ? 'https' : 'http'
-  const redirectUri = `${protocol}://${host || ''}/api/auth/callback`
-  const returnTo = `${protocol}://${host ?? ''}`
+  const redirectUri = `${protocol}://${host}/api/auth/callback`
+  const returnTo = `${protocol}://${host}`
   return {
     redirectUri,
     returnTo,
