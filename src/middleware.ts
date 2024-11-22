@@ -1,6 +1,3 @@
-// middleware.ts
-// auth0-config.ts
-import { initAuth0 } from '@auth0/nextjs-auth0'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
@@ -49,25 +46,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }
-
-export default initAuth0({
-  // Basic Auth0 config
-  baseURL: process.env.VERCEL_URL || process.env.AUTH0_BASE_URL,
-  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  // Important: Allow wildcard callback URLs for preview deployments
-  // @ts-ignore
-  callbacks: {
-    // @ts-ignore
-    redirect: (req: NextRequest, location: string) => {
-      // If it's preview mode, use VERCEL_URL
-      if (process.env.VERCEL_ENV === 'preview') {
-        const previewUrl = new URL(location)
-        previewUrl.host = process.env.VERCEL_URL || previewUrl.host
-        return previewUrl.toString()
-      }
-      return location
-    },
-  },
-})
