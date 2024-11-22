@@ -1,40 +1,54 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-const verifyBasicAuth = (authHeader: string | null, username: string, password: string) => {
+function verifyBasicAuth(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization')
   if (!authHeader) {
     return false
   }
 
-  const base64Credentials = authHeader.split(' ')[1]
-  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii')
-  const [providedUsername, providedPassword] = credentials.split(':')
+  try {
+    const [scheme, encoded] = authHeader.split(' ')
+    if (!encoded || scheme !== 'Basic') {
+      return false
+    }
 
-  return providedUsername === username && providedPassword === password
+    const buffer = Buffer.from(encoded, 'base64')
+    const [username, password] = buffer.toString('ascii').split(':')
+
+    const isValid =
+      username === process.env.PREVIEW_USERNAME && password === process.env.PREVIEW_PASSWORD
+
+    return isValid
+  } catch {
+    return false
+  }
 }
 
 export const middleware = (request: NextRequest) => {
   // Check for preview deployment
-  const isPreview = process.env.VERCEL_ENV === 'preview'
+  const hostname = request.headers.get('host') || ''
+  const isPreviewDomain = hostname.includes('vercel.app')
 
-  if (isPreview) {
-    const authHeader = request.headers.get('authorization')
+  if (
+    request.nextUrl.pathname.startsWith('/_next') ||
+    request.nextUrl.pathname.startsWith('/favicon') ||
+    request.nextUrl.pathname.includes('.') ||
+    // Dôležité: povoľ všetky auth-related cesty
+    request.nextUrl.pathname.startsWith('/api/auth')
+  ) {
+    return NextResponse.next()
+  }
 
-    // If credentials are wrong, get back auth request
-    if (
-      !verifyBasicAuth(
-        authHeader,
-        process.env.PREVIEW_USERNAME || '',
-        process.env.PREVIEW_PASSWORD || ''
-      )
-    ) {
-      return new NextResponse('Authentication required', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Preview deployment"',
-        },
-      })
-    }
+  const isPreview = process.env.VERCEL_ENV === 'preview' || isPreviewDomain
+
+  if (isPreview && !verifyBasicAuth(request)) {
+    return new NextResponse('Authentication required', {
+      status: 401,
+      headers: {
+        'WWW-Authenticate': 'Basic realm="Preview deployment"',
+      },
+    })
   }
   return NextResponse.next()
 }
@@ -42,7 +56,7 @@ export const middleware = (request: NextRequest) => {
 // Definition where should be middleware applied
 export const config = {
   matcher: [
-    // Apply for every routes except API routes and static files
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    // Apply for every routes except static files
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 }
