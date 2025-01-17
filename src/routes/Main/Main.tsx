@@ -256,8 +256,8 @@ export const Main = () => {
   const { endCursor, hasNextPage } = carsData?.cars.pageInfo || {}
 
   return (
-    <HStack overflow="auto" w="full" h="full" p="20px" spacing={10}>
-      <VStack alignItems="flex-start" justifyContent="flex-start" h="full">
+    <HStack overflowY="auto" w="full" h="full" p="20px" spacing={10}>
+      <VStack alignItems="flex-start" justifyContent="flex-start" w="300px" h="full">
         <Heading size="lg">Add Car</Heading>
         <form
           noValidate
@@ -266,7 +266,7 @@ export const Main = () => {
             void createCarHandleSubmit(onCreateCarSubmit)(event)
           }}
         >
-          <VStack alignItems="flex-start" spacing="5px">
+          <VStack alignItems="flex-start" w="full" pb="20px" spacing="5px">
             {formFields.map((field) => (
               <FormField
                 key={field.name}
