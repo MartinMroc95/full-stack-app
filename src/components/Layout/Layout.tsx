@@ -26,7 +26,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
           <Text>User:</Text>
           <Text>{user?.email}</Text>
         </VStack>
-
         <Link href="/api/auth/logout">Logout</Link>
       </VStack>
       {children}

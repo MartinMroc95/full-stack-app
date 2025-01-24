@@ -7,19 +7,23 @@ import {
   Card,
   CardBody,
   Center,
-  Flex,
+  Heading,
   HStack,
-  Input,
   Spinner,
   Text,
   useToast,
   VStack,
 } from '@chakra-ui/react'
-import type { Link } from '@prisma/client'
+import { yupResolver } from '@hookform/resolvers/yup'
+import type { Car } from '@prisma/client'
+import EditForm from 'components/EditForm'
+import FormField from 'components/FormField'
+import LabeledValue from 'components/LabeledValue'
+import { carSchema, formFields } from './constants'
 
-const GetUserLinksQuery = gql`
-  query allLinksQuery($first: Int, $after: String) {
-    links(first: $first, after: $after) {
+const GetUserCarsQuery = gql`
+  query allCarsQuery($first: Int, $after: String) {
+    cars(first: $first, after: $after) {
       pageInfo {
         endCursor
         hasNextPage
@@ -27,89 +31,201 @@ const GetUserLinksQuery = gql`
       edges {
         cursor
         node {
-          imageUrl
-          url
-          title
-          category
-          description
           id
-          userId {
-            id
-            email
-          }
+          brand
+          model
+          year
+          mileage
+          fuelType
+          enginePower
+          price
+          description
         }
       }
     }
   }
 `
 
-const CreateLinkMutation = gql`
-  mutation createLink(
-    $title: String!
-    $url: String!
-    $imageUrl: String!
-    $category: String!
+const CreateCarMutation = gql`
+  mutation addCar(
+    $brand: String!
+    $model: String!
+    $year: Int!
+    $mileage: Int!
+    $fuelType: String!
+    $enginePower: Int!
+    $price: Int!
     $description: String!
   ) {
-    createLink(
-      title: $title
-      url: $url
-      imageUrl: $imageUrl
-      category: $category
+    addCar(
+      brand: $brand
+      model: $model
+      year: $year
+      mileage: $mileage
+      fuelType: $fuelType
+      enginePower: $enginePower
+      price: $price
       description: $description
     ) {
-      title
-      url
-      imageUrl
-      category
+      brand
+    }
+  }
+`
+const RemoveCarMutation = gql`
+  mutation removeCar($id: String!) {
+    removeCar(id: $id) {
+      id
+    }
+  }
+`
+
+const UpdateCarMutation = gql`
+  mutation updateCar(
+    $id: String!
+    $brand: String!
+    $model: String!
+    $year: Int!
+    $mileage: Int!
+    $fuelType: String!
+    $enginePower: Int!
+    $price: Int!
+    $description: String!
+  ) {
+    updateCar(
+      id: $id
+      brand: $brand
+      model: $model
+      year: $year
+      mileage: $mileage
+      fuelType: $fuelType
+      enginePower: $enginePower
+      price: $price
+      description: $description
+    ) {
+      id
+      brand
+      model
+      year
+      mileage
+      fuelType
+      enginePower
+      price
       description
     }
   }
 `
 
-type LinkData = {
-  links: {
+type CarData = {
+  cars: {
     pageInfo: { endCursor: string; hasNextPage: boolean }
-    edges: Array<{ node: Link }>
+    edges: Array<{ node: Car }>
   }
 }
 
 type FormValues = {
-  category: string
-  description: string
-  image: FileList
-  title: string
-  url: string
+  brand: string
+  model: string
+  year: number
+  mileage: number
+  fuelType: string
+  enginePower: number
+  price: number
+  description?: string
 }
 
 export const Main = () => {
   const toast = useToast()
+  const [editingId, setEditingId] = React.useState<string | null>(null)
 
   const {
-    data,
-    loading: isLinksQueryLoading,
-    error: linksQueryError,
-    fetchMore: fetchMoreLinks,
-  } = useQuery<LinkData>(GetUserLinksQuery, {
+    reset: createCarReset,
+    register: createCarRegister,
+    handleSubmit: createCarHandleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(carSchema),
+    mode: 'onSubmit',
+  })
+
+  const {
+    data: carsData,
+    loading: isCarsQueryLoading,
+    error: carsQueryError,
+    fetchMore: fetchMoreCars,
+  } = useQuery<CarData>(GetUserCarsQuery, {
     variables: { first: 2 },
   })
 
-  const { register, getValues, reset } = useForm<FormValues>()
-
-  const [createLink, { loading }] = useMutation(CreateLinkMutation, {
-    onCompleted: () => reset(),
+  const [updateCar] = useMutation(UpdateCarMutation, {
+    onCompleted: () => {
+      setEditingId(null)
+      toast({
+        title: 'Car has been updated successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+    },
+    onError: (error) => {
+      console.error('error', error)
+      toast({
+        title: 'Error!',
+        description: 'Something went wrong while updating the car',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+    },
   })
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault()
-    const { title, url, category, description } = getValues()
-    const imageUrl = `https://via.placeholder.com/300`
-    const variables = { title, url, category, description, imageUrl }
+  const [removeCar] = useMutation(RemoveCarMutation, {
+    onCompleted: () => {
+      toast({
+        title: 'Car has been removed successfully!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+    },
+    onError: (error) => {
+      console.error('error', error)
+      toast({
+        title: 'Error!',
+        description: 'Something went wrong while removing the car',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      })
+    },
+    refetchQueries: [{ query: GetUserCarsQuery, variables: { first: 2 } }],
+  })
+
+  const [createCar, { loading: isCarLoading }] = useMutation(CreateCarMutation, {
+    onCompleted: () => createCarReset(),
+    refetchQueries: [{ query: GetUserCarsQuery, variables: { first: 2 } }],
+  })
+
+  const onCreateCarSubmit = async (carData: FormValues) => {
+    const { brand, model, year, mileage, fuelType, enginePower, price, description } = carData
+    const variables = {
+      brand,
+      model,
+      year,
+      mileage,
+      fuelType,
+      enginePower,
+      price,
+      description,
+    }
     try {
-      const response = await createLink({ variables })
+      const response = await createCar({ variables })
       if (response.data) {
         toast({
-          title: 'Link has been created successfully!',
+          title: 'Car has been created successfully!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -117,7 +233,7 @@ export const Main = () => {
         })
       }
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
       toast({
         title: 'Error!',
         description: 'Something went wrong...',
@@ -129,86 +245,127 @@ export const Main = () => {
     }
   }
 
-  if (isLinksQueryLoading) {
+  if (isCarLoading) {
     return (
       <Center w="full" h="full">
-        <Spinner>Loading...</Spinner>
+        <Spinner size="md">Loading...</Spinner>
       </Center>
     )
   }
 
-  const { endCursor, hasNextPage } = data?.links.pageInfo || {}
+  const { endCursor, hasNextPage } = carsData?.cars.pageInfo || {}
 
   return (
-    <VStack w="full" h="full">
-      <Flex p="20px">NextJS App</Flex>
-      <Box>{linksQueryError?.message}</Box>
-      <HStack flexWrap="wrap" gap="10px">
-        {data?.links.edges.map(({ node }) => (
-          <Card key={node.id}>
-            <CardBody>
-              <Text>{node.title}</Text>
-              <Text>{node.description}</Text>
-            </CardBody>
-          </Card>
-        ))}
-      </HStack>
-      {hasNextPage ? (
-        <Button
-          onClick={() => {
-            void fetchMoreLinks({
-              variables: { after: endCursor },
-              updateQuery: (prevResult, { fetchMoreResult }) => ({
-                links: {
-                  pageInfo: fetchMoreResult.links.pageInfo,
-                  edges: [...prevResult.links.edges, ...fetchMoreResult.links.edges],
-                },
-              }),
-            })
+    <HStack overflowY="auto" w="full" h="full" p="20px" spacing={10}>
+      <VStack alignItems="flex-start" justifyContent="flex-start" w="300px" h="full">
+        <Heading size="lg">Add Car</Heading>
+        <form
+          noValidate
+          onSubmit={(event) => {
+            event.preventDefault()
+            void createCarHandleSubmit(onCreateCarSubmit)(event)
           }}
         >
-          More
-        </Button>
-      ) : (
-        <Text>{`You've reached the end!`}</Text>
+          <VStack alignItems="flex-start" w="full" pb="20px" spacing="5px">
+            {formFields.map((field) => (
+              <FormField
+                key={field.name}
+                label={field.label}
+                name={field.name}
+                placeholder={field.placeholder}
+                register={createCarRegister}
+                error={errors[field.name as keyof FormValues]}
+                type={field.type}
+              />
+            ))}
+            <Button w="full" mt="10px" colorScheme="blue" disabled={isCarLoading} type="submit">
+              {isCarLoading ? <Text>Creating...</Text> : <Text>Add Car</Text>}
+            </Button>
+          </VStack>
+        </form>
+      </VStack>
+      {isCarsQueryLoading && (
+        <Center w="full" h="full">
+          <Spinner size="md">Loading...</Spinner>
+        </Center>
       )}
-      <form
-        onSubmit={(event) => {
-          void handleSubmit(event)
-        }}
-      >
-        <Text>Title</Text>
-        <Input
-          placeholder="Title"
-          {...register('title', { required: true })}
-          name="title"
-          type="text"
-        />
-        <Text>Description</Text>
-        <Input
-          placeholder="Description"
-          {...register('description', { required: true })}
-          name="description"
-          type="text"
-        />
-        <Text>Url</Text>
-        <Input
-          placeholder="https://example.com"
-          {...register('url', { required: true })}
-          name="url"
-          type="text"
-        />
-        <Text>Category</Text>
-        <Input
-          placeholder="Name"
-          {...register('category', { required: true })}
-          name="category"
-          type="text"
-        />
-        <Button disabled={loading} type="submit">
-          {loading ? <Text> Creating...</Text> : <Text>Create Link</Text>}
-        </Button>
-      </form>
-    </VStack>
+      {!isCarsQueryLoading && carsQueryError && <Box>{carsQueryError.message}</Box>}
+      {!isCarsQueryLoading && !carsQueryError && carsData && (
+        <VStack alignItems="flex-start" justifyContent="flex-start" w="full" h="full">
+          <Heading size="lg">Yours Cars</Heading>
+          <HStack flexWrap="wrap" gap="10px" w="full">
+            {carsData?.cars.edges.map(({ node }) => (
+              <Card key={node.id} w="full">
+                <CardBody>
+                  {editingId === node.id ? (
+                    <EditForm
+                      car={node}
+                      onSubmit={(data) => {
+                        void updateCar({
+                          variables: {
+                            id: editingId,
+                            ...data,
+                          },
+                        })
+                      }}
+                      onCancelClick={() => setEditingId(null)}
+                      schema={carSchema}
+                    />
+                  ) : (
+                    <VStack alignItems="flex-start" spacing="5px">
+                      <HStack alignItems="flex-start" spacing="10px">
+                        {formFields.map(({ label, name }) => (
+                          <LabeledValue
+                            key={name}
+                            label={label}
+                            value={node[name as keyof Car] as string | number}
+                          />
+                        ))}
+                      </HStack>
+                      <HStack>
+                        <Button onClick={() => setEditingId(node.id)} size="sm">
+                          Edit
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            void removeCar({ variables: { id: node.id } })
+                          }}
+                          size="sm"
+                          variant="outline"
+                        >
+                          Remove
+                        </Button>
+                      </HStack>
+                    </VStack>
+                  )}
+                </CardBody>
+              </Card>
+            ))}
+          </HStack>
+          {hasNextPage ? (
+            <Button
+              mt="10px"
+              isLoading={isCarsQueryLoading}
+              onClick={() => {
+                void fetchMoreCars({
+                  variables: { after: endCursor },
+                  updateQuery: (prevResult, { fetchMoreResult }) => ({
+                    cars: {
+                      pageInfo: fetchMoreResult.cars.pageInfo,
+                      edges: [...prevResult.cars.edges, ...fetchMoreResult.cars.edges],
+                    },
+                  }),
+                })
+              }}
+            >
+              Load More
+            </Button>
+          ) : (
+            <Text>{`You've reached the end!`}</Text>
+          )}
+        </VStack>
+      )}
+    </HStack>
   )
 }
