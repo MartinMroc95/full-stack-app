@@ -1,10 +1,10 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, HStack, VStack } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Car } from '@prisma/client'
 import { AnyObject, ObjectSchema } from 'yup'
 import { FormField } from 'components/FormField/FormField'
+import { Button } from 'components/ui/button'
 
 const formFields = [
   { name: 'brand', label: 'Brand', type: 'text' },
@@ -57,9 +57,9 @@ export const EditForm: React.FC<EditFormProps> = ({ car, onSubmit, onCancelClick
         void editFormHandleSubmit(onSubmit)(event)
       }}
     >
-      <VStack alignItems="flex-start" w="full" spacing={2}>
-        <VStack alignItems="flex-start" spacing="10px">
-          <HStack alignItems="flex-start" flexWrap="wrap" spacing="10px">
+      <div className="flex flex-col space-y-4 w-full">
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-wrap gap-2.5">
             {formFields.map(({ name, label, type }) => (
               <FormField
                 key={name}
@@ -72,15 +72,17 @@ export const EditForm: React.FC<EditFormProps> = ({ car, onSubmit, onCancelClick
                 value={car[name] ?? ''}
               />
             ))}
-          </HStack>
-          <HStack>
-            <Button isDisabled={!isDirty} type="submit">
+          </div>
+          <div className="flex space-x-2">
+            <Button disabled={!isDirty} type="submit">
               Done
             </Button>
-            <Button onClick={onCancelClick}>Cancel</Button>
-          </HStack>
-        </VStack>
-      </VStack>
+            <Button variant="outline" onClick={onCancelClick}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </div>
     </form>
   )
 }

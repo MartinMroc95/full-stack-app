@@ -14,12 +14,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "src",
-    "rootDir": ".",
+    "baseUrl": ".",
     "paths": {
-      "components/*": ["components/*"],
-      "data/*": ["data/*"],
-      "@pothos/plugin-prisma/generated": ["./node_modules/@pothos/plugin-prisma/generated"]
+      "routes/*": ["src/routes/*"],
+      "components/*": ["src/components/*"],
+      "styles/*": ["src/styles/*"],
+      "lib/*": ["lib/*"],
+      "prisma/*": ["prisma/*"],
+      "@pothos/plugin-prisma/generated": ["node_modules/@pothos/plugin-prisma/generated"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

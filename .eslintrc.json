@@ -6,7 +6,7 @@
     "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["chakra-ui", "import"],
+  "plugins": ["import"],
   "ignorePatterns": ["next.config.js", "*.config.js"],
   "settings": {
     "import/resolver": {
@@ -20,6 +20,12 @@
     }
   },
   "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "playwright.config.ts"]
+      }
+    ],
     "react/function-component-definition": [
       "error",
       {
@@ -28,9 +34,6 @@
       }
     ],
     "arrow-body-style": ["error", "as-needed"],
-    "chakra-ui/props-order": "error",
-    "chakra-ui/props-shorthand": "error",
-    "chakra-ui/require-specific-component": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {

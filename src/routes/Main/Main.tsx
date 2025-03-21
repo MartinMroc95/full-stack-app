@@ -1,24 +1,14 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { gql, useMutation, useQuery } from '@apollo/client'
-import {
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Center,
-  Heading,
-  HStack,
-  Spinner,
-  Text,
-  useToast,
-  VStack,
-} from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import type { Car } from '@prisma/client'
+import { toast } from 'sonner'
 import EditForm from 'components/EditForm'
 import FormField from 'components/FormField'
 import LabeledValue from 'components/LabeledValue'
+import { Button } from 'components/ui/button'
+import { Card, CardContent } from 'components/ui/card'
 import { carSchema, formFields } from './constants'
 
 const GetUserCarsQuery = gql`
@@ -134,7 +124,6 @@ type FormValues = {
 }
 
 export const Main = () => {
-  const toast = useToast()
   const [editingId, setEditingId] = React.useState<string | null>(null)
 
   const {
@@ -159,47 +148,21 @@ export const Main = () => {
   const [updateCar] = useMutation(UpdateCarMutation, {
     onCompleted: () => {
       setEditingId(null)
-      toast({
-        title: 'Car has been updated successfully!',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      toast.success('Car has been updated successfully!')
     },
     onError: (error) => {
       console.error('error', error)
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong while updating the car',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      toast.error('Something went wrong while updating the car')
     },
   })
 
   const [removeCar] = useMutation(RemoveCarMutation, {
     onCompleted: () => {
-      toast({
-        title: 'Car has been removed successfully!',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      toast.success('Car has been removed successfully!')
     },
     onError: (error) => {
       console.error('error', error)
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong while removing the car',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      toast.error('Something went wrong while removing the car')
     },
     refetchQueries: [{ query: GetUserCarsQuery, variables: { first: 2 } }],
   })
@@ -224,41 +187,28 @@ export const Main = () => {
     try {
       const response = await createCar({ variables })
       if (response.data) {
-        toast({
-          title: 'Car has been created successfully!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-          position: 'top',
-        })
+        toast.success('Car has been created successfully!')
       }
     } catch (error) {
       console.error('error', error)
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong...',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      })
+      toast.error('Something went wrong...')
     }
   }
 
   if (isCarLoading) {
     return (
-      <Center w="full" h="full">
-        <Spinner size="md">Loading...</Spinner>
-      </Center>
+      <div className="flex items-center justify-center w-full h-full">
+        <div className="animate-spin h-8 w-8 border-2 border-blue-500 rounded-full border-t-transparent" />
+      </div>
     )
   }
 
   const { endCursor, hasNextPage } = carsData?.cars.pageInfo || {}
 
   return (
-    <HStack overflowY="auto" w="full" h="full" p="20px" spacing={10}>
-      <VStack alignItems="flex-start" justifyContent="flex-start" w="300px" h="full">
-        <Heading size="lg">Add Car</Heading>
+    <div className="flex overflow-y-auto w-full h-full p-5 gap-10">
+      <div className="flex flex-col items-start justify-start w-[250px] h-full">
+        <h1 className="text-3xl font-bold mb-4">Add Car</h1>
         <form
           noValidate
           onSubmit={(event) => {
@@ -266,7 +216,7 @@ export const Main = () => {
             void createCarHandleSubmit(onCreateCarSubmit)(event)
           }}
         >
-          <VStack alignItems="flex-start" w="full" pb="20px" spacing="5px">
+          <div className="flex flex-col items-start w-full pb-5 space-y-3">
             {formFields.map((field) => (
               <FormField
                 key={field.name}
@@ -278,29 +228,29 @@ export const Main = () => {
                 type={field.type}
               />
             ))}
-            <Button w="full" mt="10px" colorScheme="blue" disabled={isCarLoading} type="submit">
-              {isCarLoading ? <Text>Creating...</Text> : <Text>Add Car</Text>}
+            <Button className="w-full mt-2.5" disabled={isCarLoading} type="submit">
+              {isCarLoading ? 'Creating...' : 'Add Car'}
             </Button>
-          </VStack>
+          </div>
         </form>
-      </VStack>
+      </div>
       {isCarsQueryLoading && (
-        <Center w="full" h="full">
-          <Spinner size="md">Loading...</Spinner>
-        </Center>
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="animate-spin h-8 w-8 border-2 border-blue-500 rounded-full border-t-transparent" />
+        </div>
       )}
-      {!isCarsQueryLoading && carsQueryError && <Box>{carsQueryError.message}</Box>}
+      {!isCarsQueryLoading && carsQueryError && <div>{carsQueryError.message}</div>}
       {!isCarsQueryLoading && !carsQueryError && carsData && (
-        <VStack alignItems="flex-start" justifyContent="flex-start" w="full" h="full">
-          <Heading size="lg">Yours Cars</Heading>
-          <HStack flexWrap="wrap" gap="10px" w="full">
+        <div className="flex flex-col items-start justify-start w-full h-full">
+          <h1 className="text-3xl font-bold mb-4">Your Cars</h1>
+          <div className="flex flex-wrap gap-2.5 w-full">
             {carsData?.cars.edges.map(({ node }) => (
-              <Card key={node.id} w="full">
-                <CardBody>
+              <Card className="w-full" key={node.id}>
+                <CardContent className="pt-6">
                   {editingId === node.id ? (
                     <EditForm
                       car={node}
-                      onSubmit={(data) => {
+                      onSubmit={(data: FormValues) => {
                         void updateCar({
                           variables: {
                             id: editingId,
@@ -312,8 +262,8 @@ export const Main = () => {
                       schema={carSchema}
                     />
                   ) : (
-                    <VStack alignItems="flex-start" spacing="5px">
-                      <HStack alignItems="flex-start" spacing="10px">
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex flex-wrap gap-2.5">
                         {formFields.map(({ label, name }) => (
                           <LabeledValue
                             key={name}
@@ -321,32 +271,31 @@ export const Main = () => {
                             value={node[name as keyof Car] as string | number}
                           />
                         ))}
-                      </HStack>
-                      <HStack>
-                        <Button onClick={() => setEditingId(node.id)} size="sm">
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button onClick={() => setEditingId(node.id)} size="sm" variant="outline">
                           Edit
                         </Button>
                         <Button
-                          colorScheme="red"
                           onClick={() => {
                             void removeCar({ variables: { id: node.id } })
                           }}
                           size="sm"
-                          variant="outline"
+                          variant="destructive"
                         >
                           Remove
                         </Button>
-                      </HStack>
-                    </VStack>
+                      </div>
+                    </div>
                   )}
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
-          </HStack>
+          </div>
           {hasNextPage ? (
             <Button
-              mt="10px"
-              isLoading={isCarsQueryLoading}
+              className="mt-2.5"
+              disabled={isCarsQueryLoading}
               onClick={() => {
                 void fetchMoreCars({
                   variables: { after: endCursor },
@@ -359,13 +308,20 @@ export const Main = () => {
                 })
               }}
             >
-              Load More
+              {isCarsQueryLoading ? (
+                <>
+                  <span className="mr-2">Loading</span>
+                  <div className="animate-spin h-4 w-4 border-2 border-current rounded-full border-t-transparent" />
+                </>
+              ) : (
+                'Load More'
+              )}
             </Button>
           ) : (
-            <Text>{`You've reached the end!`}</Text>
+            <p className="pt-2 font-bold">{`You've reached the end!`}</p>
           )}
-        </VStack>
+        </div>
       )}
-    </HStack>
+    </div>
   )
 }

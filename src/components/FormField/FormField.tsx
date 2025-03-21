@@ -1,5 +1,8 @@
 import { FieldError, UseFormRegister } from 'react-hook-form'
-import { FormControl, FormErrorMessage, FormLabel, Input, Textarea } from '@chakra-ui/react'
+import { cn } from 'components/lib/utils'
+import { Input } from 'components/ui/input'
+import { Label } from 'components/ui/label'
+import { Textarea } from 'components/ui/textarea'
 
 interface FormFieldProps {
   error?: FieldError
@@ -28,20 +31,31 @@ export const FormField: React.FC<FormFieldProps> = ({
   }
 
   return (
-    <FormControl w={width} isInvalid={!!error}>
-      <FormLabel>{label}</FormLabel>
+    <div className="space-y-1" style={{ width }}>
+      <Label htmlFor={name}>{label}</Label>
       {type === 'textarea' ? (
-        <Textarea {...inputProps} name={name} placeholder={placeholder} />
+        <Textarea
+          {...inputProps}
+          id={name}
+          name={name}
+          placeholder={placeholder}
+          className={cn(error ? 'border-red-500' : '', 'focus:border-primary focus:ring-primary')}
+        />
       ) : (
         <Input
           {...inputProps}
+          id={name}
           defaultValue={value}
           name={name}
           placeholder={placeholder}
           type={type}
+          className={cn(
+            error ? 'border-red-500' : '',
+            'focus:border-blue-400  focus:shadow-blue-400 focus:shadow-[0_0_0_1px_blue-400]'
+          )}
         />
       )}
-      <FormErrorMessage>{error?.message}</FormErrorMessage>
-    </FormControl>
+      {error && <p className="text-sm font-medium text-red-500">{error.message}</p>}
+    </div>
   )
 }
