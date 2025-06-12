@@ -1,9 +1,17 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
+import { useUser } from '@auth0/nextjs-auth0/client'
 import { yupResolver } from '@hookform/resolvers/yup'
 import type { Car } from '@prisma/client'
+// import type { Car } from '@prisma/client'
 import { toast } from 'sonner'
+import {
+  CreateCarMutation,
+  GetUserCarsQuery,
+  RemoveCarMutation,
+  UpdateCarMutation,
+} from 'src/graphql/cars'
 import EditForm from 'components/EditForm'
 import FormField from 'components/FormField'
 import LabeledValue from 'components/LabeledValue'
@@ -11,104 +19,10 @@ import { Button } from 'components/ui/button'
 import { Card, CardContent } from 'components/ui/card'
 import { carSchema, formFields } from './constants'
 
-const GetUserCarsQuery = gql`
-  query allCarsQuery($first: Int, $after: String) {
-    cars(first: $first, after: $after) {
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-      edges {
-        cursor
-        node {
-          id
-          brand
-          model
-          year
-          mileage
-          fuelType
-          enginePower
-          price
-          description
-        }
-      }
-    }
-  }
-`
-
-const CreateCarMutation = gql`
-  mutation addCar(
-    $brand: String!
-    $model: String!
-    $year: Int!
-    $mileage: Int!
-    $fuelType: String!
-    $enginePower: Int!
-    $price: Int!
-    $description: String!
-  ) {
-    addCar(
-      brand: $brand
-      model: $model
-      year: $year
-      mileage: $mileage
-      fuelType: $fuelType
-      enginePower: $enginePower
-      price: $price
-      description: $description
-    ) {
-      brand
-    }
-  }
-`
-const RemoveCarMutation = gql`
-  mutation removeCar($id: String!) {
-    removeCar(id: $id) {
-      id
-    }
-  }
-`
-
-const UpdateCarMutation = gql`
-  mutation updateCar(
-    $id: String!
-    $brand: String!
-    $model: String!
-    $year: Int!
-    $mileage: Int!
-    $fuelType: String!
-    $enginePower: Int!
-    $price: Int!
-    $description: String!
-  ) {
-    updateCar(
-      id: $id
-      brand: $brand
-      model: $model
-      year: $year
-      mileage: $mileage
-      fuelType: $fuelType
-      enginePower: $enginePower
-      price: $price
-      description: $description
-    ) {
-      id
-      brand
-      model
-      year
-      mileage
-      fuelType
-      enginePower
-      price
-      description
-    }
-  }
-`
-
-type CarData = {
+type CarsQueryResponse = {
   cars: {
     pageInfo: { endCursor: string; hasNextPage: boolean }
-    edges: Array<{ node: Car }>
+    edges: Array<{ cursor: string; node: Car }>
   }
 }
 
@@ -124,8 +38,9 @@ type FormValues = {
 }
 
 export const Main = () => {
+  const { user } = useUser()
   const [editingId, setEditingId] = React.useState<string | null>(null)
-
+  console.log('user', user)
   const {
     reset: createCarReset,
     register: createCarRegister,
@@ -141,7 +56,7 @@ export const Main = () => {
     loading: isCarsQueryLoading,
     error: carsQueryError,
     fetchMore: fetchMoreCars,
-  } = useQuery<CarData>(GetUserCarsQuery, {
+  } = useQuery<CarsQueryResponse>(GetUserCarsQuery, {
     variables: { first: 2 },
   })
 
@@ -186,6 +101,7 @@ export const Main = () => {
     }
     try {
       const response = await createCar({ variables })
+      console.log('response', response)
       if (response.data) {
         toast.success('Car has been created successfully!')
       }
@@ -253,8 +169,10 @@ export const Main = () => {
                       onSubmit={(data: FormValues) => {
                         void updateCar({
                           variables: {
-                            id: editingId,
-                            ...data,
+                            input: {
+                              id: editingId,
+                              ...data,
+                            },
                           },
                         })
                       }}
