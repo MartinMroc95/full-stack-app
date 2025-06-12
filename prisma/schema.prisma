@@ -3,7 +3,9 @@ generator client {
 }
 
 generator pothos {
-  provider = "prisma-pothos-types"
+  provider     = "prisma-pothos-types"
+  clientOutput = "@prisma/client"
+  output       = "./pothos-types.ts"
 }
 
 datasource db {
@@ -13,16 +15,16 @@ datasource db {
 }
 
 model User {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  email            String         @unique
+  id               String             @id @default(uuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  email            String             @unique
   image            String?
-  role             Role           @default(USER)
-  stripeCustomerId String?        @unique
+  role             Role               @default(USER)
+  stripeCustomerId String?            @unique
   cars             Car[]
   invoices         Invoice[]
-  subscriptions    Subscription[]
+  subscriptions    UserSubscription[]
 }
 
 model Car {
@@ -41,7 +43,7 @@ model Car {
   User        User     @relation(fields: [userId], references: [id])
 }
 
-model Subscription {
+model UserSubscription {
   id                     String    @id @default(uuid())
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
@@ -57,19 +59,19 @@ model Subscription {
 }
 
 model Invoice {
-  id                    String        @id @default(uuid())
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  id                    String            @id @default(uuid())
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
   amount                Int
-  currency              String        @default("eur")
+  currency              String            @default("eur")
   status                String
   stripeInvoiceId       String?
   stripePaymentIntentId String?
   subscriptionId        String?
   userId                String
   paidAt                DateTime?
-  subscription          Subscription? @relation(fields: [subscriptionId], references: [id])
-  user                  User          @relation(fields: [userId], references: [id])
+  subscription          UserSubscription? @relation(fields: [subscriptionId], references: [id])
+  user                  User              @relation(fields: [userId], references: [id])
 }
 
 enum Role {

@@ -1,6 +1,20 @@
 import prisma from '../../lib/prisma'
 import { builder } from '../builder'
 
+export const UpdateCarInput = builder.inputType('UpdateCarInput', {
+  fields: (t) => ({
+    id: t.string({ required: true }),
+    brand: t.string({ required: true }),
+    model: t.string({ required: true }),
+    year: t.int({ required: true }),
+    mileage: t.int({ required: true }),
+    fuelType: t.string({ required: true }),
+    enginePower: t.int({ required: true }),
+    price: t.int({ required: true }),
+    description: t.string({ required: false }),
+  }),
+})
+
 builder.prismaObject('Car', {
   fields: (t) => ({
     id: t.exposeID('id'),
@@ -27,25 +41,17 @@ builder.queryField('cars', (t) =>
         where: { userId: user?.id },
       })
     },
-  })
+  }),
 )
 
 builder.mutationField('updateCar', (t) =>
   t.prismaField({
     type: 'Car',
     args: {
-      id: t.arg.string({ required: true }),
-      brand: t.arg.string({ required: true }),
-      model: t.arg.string({ required: true }),
-      year: t.arg.int({ required: true }),
-      mileage: t.arg.int({ required: true }),
-      fuelType: t.arg.string({ required: true }),
-      enginePower: t.arg.int({ required: true }),
-      price: t.arg.int({ required: true }),
-      description: t.arg.string({ required: true }),
+      input: t.arg({ type: UpdateCarInput, required: true }),
     },
     resolve: async (query, _parent, args, ctx) => {
-      const { id, ...data } = args
+      const { id, ...data } = args.input
       const { user } = await ctx
 
       if (!user) {
@@ -66,7 +72,7 @@ builder.mutationField('updateCar', (t) =>
         data,
       })
     },
-  })
+  }),
 )
 
 builder.mutationField('addCar', (t) =>
@@ -85,6 +91,8 @@ builder.mutationField('addCar', (t) =>
     resolve: async (query, _parent, args, ctx) => {
       const { brand, model, year, mileage, fuelType, enginePower, price, description } = args
       const { user } = await ctx
+
+      console.log('user', user)
 
       if (!user) {
         throw new Error('You have to be logged in to perform this action')
@@ -105,7 +113,7 @@ builder.mutationField('addCar', (t) =>
         },
       })
     },
-  })
+  }),
 )
 
 builder.mutationField('removeCar', (t) =>
@@ -135,5 +143,5 @@ builder.mutationField('removeCar', (t) =>
         where: { id },
       })
     },
-  })
+  }),
 )
