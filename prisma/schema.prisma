@@ -1,15 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 generator pothos {
-  provider = "prisma-pothos-types"
+  provider     = "prisma-pothos-types"
+  clientOutput = "@prisma/client"
+  output       = "./pothos-types.ts"
 }
 
 datasource db {
@@ -19,25 +15,22 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  createdAt  DateTime @default(now())
-  updateddAt DateTime @default(now())
-  email      String   @unique
-  image      String?
-  role       Role     @default(USER)
-  bookmarks  Link[]
-  cars       Car[]
-}
-
-enum Role {
-  ADMIN
-  USER
+  id               String             @id @default(uuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  email            String             @unique
+  image            String?
+  role             Role               @default(USER)
+  stripeCustomerId String?            @unique
+  cars             Car[]
+  invoices         Invoice[]
+  subscriptions    UserSubscription[]
 }
 
 model Car {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
-  updateddAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   brand       String
   model       String
   year        Int
@@ -46,19 +39,42 @@ model Car {
   enginePower Int
   price       Int
   description String?
-  User        User     @relation(fields: [userId], references: [id])
   userId      String
+  User        User     @relation(fields: [userId], references: [id])
 }
 
-model Link {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updateddAt  DateTime @default(now())
-  title       String
-  description String
-  url         String
-  category    String?
-  imageUrl    String?
-  userId      String
-  User        User     @relation(fields: [userId], references: [id])
+model UserSubscription {
+  id                     String    @id @default(uuid())
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  status                 String
+  tier                   String
+  stripePriceId          String
+  stripeCustomerId       String?
+  stripeSubscriptionId   String?   @unique
+  stripeCurrentPeriodEnd DateTime?
+  userId                 String
+  invoices               Invoice[]
+  user                   User      @relation(fields: [userId], references: [id])
+}
+
+model Invoice {
+  id                    String            @id @default(uuid())
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  amount                Int
+  currency              String            @default("eur")
+  status                String
+  stripeInvoiceId       String?
+  stripePaymentIntentId String?
+  subscriptionId        String?
+  userId                String
+  paidAt                DateTime?
+  subscription          UserSubscription? @relation(fields: [subscriptionId], references: [id])
+  user                  User              @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
 }

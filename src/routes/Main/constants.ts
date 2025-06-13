@@ -76,5 +76,5 @@ export const carSchema = yup.object().shape({
     .typeError('Price is required')
     .positive('Price must be positive')
     .required('Price is required'),
-  description: yup.string().min(10, 'Description must be at least 10 characters'),
+  description: yup.string().optional(),
 })
