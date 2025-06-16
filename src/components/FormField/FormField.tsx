@@ -51,7 +51,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           type={type}
           className={cn(
             error ? 'border-red-500' : '',
-            'focus:border-blue-400  focus:shadow-blue-400 focus:shadow-[0_0_0_1px_blue-400]'
+            'focus:border-blue-400  focus:shadow-blue-400 focus:shadow-[0_0_0_1px_blue-400]',
           )}
         />
       )}

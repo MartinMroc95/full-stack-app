@@ -24,6 +24,6 @@
       "@pothos/plugin-prisma/generated": ["node_modules/@pothos/plugin-prisma/generated"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/graphql/cars.grahpql"],
   "exclude": ["node_modules"]
 }
