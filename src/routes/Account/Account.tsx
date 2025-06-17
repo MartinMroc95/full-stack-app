@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { useRouter } from 'next/router'
 import { useSubscription } from 'src/context/SubscriptionContext'
-
+import SubscriptionInfo from 'components/common/EditForm/Subscription/SubscriptionInfo'
 import { Button } from 'components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card'
 import { Separator } from 'components/ui/separator'
 import Invoices from './components/Invoices'
-import SubscriptionInfo from 'components/common/EditForm/Subscription/SubscriptionInfo'
 
 const Account = () => {
   const router = useRouter()
