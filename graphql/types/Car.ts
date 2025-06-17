@@ -27,6 +27,8 @@ builder.prismaObject('Car', {
     price: t.exposeInt('price'),
     description: t.exposeString('description'),
     userId: t.relation('User'),
+    createdAt: t.expose('createdAt', { type: 'DateTime' }),
+    updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
   }),
 })
 
