@@ -5,6 +5,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { PagesProgressBar as ProgressBar } from 'next-nprogress-bar'
 import { Toaster } from 'sonner'
+import { SidebarProvider } from 'components/ui/sidebar'
 import apolloClient from '../../lib/apollo'
 import { SubscriptionProvider } from '../context/SubscriptionContext'
 import '../styles/globals.css'
@@ -25,7 +26,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       <SubscriptionProvider>
         <ApolloProvider client={apolloClient}>
           <ProgressBar height="4px" shallowRouting />
-          {getLayout(<Component {...pageProps} />)}
+          <SidebarProvider>{getLayout(<Component {...pageProps} />)}</SidebarProvider>
           <Toaster position="top-center" />
         </ApolloProvider>
       </SubscriptionProvider>

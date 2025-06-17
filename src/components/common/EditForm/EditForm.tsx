@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Car } from '@prisma/client'
 import { AnyObject, ObjectSchema } from 'yup'
-import { FormField } from 'components/FormField/FormField'
+import { FormField } from 'components/common/FormField/FormField'
 import { Button } from 'components/ui/button'
 
 const formFields = [
@@ -32,7 +32,7 @@ interface EditFormProps {
   car: Car
   onSubmit: (data: FormValues) => void
   onCancelClick: () => void
-  schema: ObjectSchema<FormValues, AnyObject, any, ''>
+  schema: ObjectSchema<FormValues, AnyObject, unknown, ''>
 }
 
 export const EditForm: React.FC<EditFormProps> = ({ car, onSubmit, onCancelClick, schema }) => {

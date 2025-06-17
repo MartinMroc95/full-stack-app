@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import CreateInvoiceForm from 'src/components/Invoicing/CreateInvoiceForm'
+import CreateInvoiceForm from 'components/common/Invoicing/CreateInvoiceForm'
 import { Badge } from 'components/ui/badge'
 import { Button } from 'components/ui/button'
 import { Card, CardContent } from 'components/ui/card'

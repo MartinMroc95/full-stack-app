@@ -12,9 +12,9 @@ import {
   RemoveCarMutation,
   UpdateCarMutation,
 } from 'src/graphql/cars'
-import EditForm from 'components/EditForm'
-import FormField from 'components/FormField'
-import LabeledValue from 'components/LabeledValue'
+import EditForm from 'components/common/EditForm'
+import FormField from 'components/common/FormField'
+import LabeledValue from 'components/common/LabeledValue'
 import { Button } from 'components/ui/button'
 import { Card, CardContent } from 'components/ui/card'
 import { carSchema, formFields } from './constants'
@@ -122,7 +122,7 @@ export const Main = () => {
   const { endCursor, hasNextPage } = carsData?.cars.pageInfo || {}
 
   return (
-    <div className="flex overflow-y-auto w-full h-full p-5 gap-10">
+    <div className="flex w-full p-5 gap-10">
       <div className="flex flex-col items-start justify-start w-[250px] h-full">
         <h1 className="text-3xl font-bold mb-4">Add Car</h1>
         <form
@@ -161,7 +161,7 @@ export const Main = () => {
           <h1 className="text-3xl font-bold mb-4">Your Cars</h1>
           <div className="flex flex-wrap gap-2.5 w-full">
             {carsData?.cars.edges.map(({ node }) => (
-              <Card className="w-full" key={node.id}>
+              <Card className="w-full" key={`${node.id}-${node.brand}-${node.model}`}>
                 <CardContent className="pt-6">
                   {editingId === node.id ? (
                     <EditForm

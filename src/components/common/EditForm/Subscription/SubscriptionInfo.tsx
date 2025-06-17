@@ -1,9 +1,9 @@
 import React from 'react'
+import { useSubscription } from 'src/context/SubscriptionContext'
 import { Badge } from 'components/ui/badge'
 import { Button } from 'components/ui/button'
 import { Card, CardContent } from 'components/ui/card'
 import { Skeleton } from 'components/ui/skeleton'
-import { useSubscription } from '../../context/SubscriptionContext'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
 
 interface SubscriptionInfoProps {

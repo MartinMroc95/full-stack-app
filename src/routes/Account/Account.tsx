@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { useRouter } from 'next/router'
 import { useSubscription } from 'src/context/SubscriptionContext'
-import SubscriptionInfo from 'components/Subscription/SubscriptionInfo'
+import SubscriptionInfo from 'components/common/EditForm/Subscription/SubscriptionInfo'
 import { Button } from 'components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card'
 import { Separator } from 'components/ui/separator'
@@ -31,7 +31,9 @@ const Account = () => {
           <h1 className="text-3xl font-bold mb-2">Account</h1>
           <p className="text-muted-foreground">Manage your account and subscription</p>
         </div>
+
         <Separator />
+
         <div className="flex gap-8 w-full">
           <Card className="w-full">
             <CardHeader>
@@ -60,6 +62,7 @@ const Account = () => {
               </div>
             </CardContent>
           </Card>
+
           <Card className="w-full">
             <CardHeader>
               <CardTitle>Subscription</CardTitle>
@@ -84,6 +87,7 @@ const Account = () => {
             </CardContent>
           </Card>
         </div>
+
         {isInvoicesVisible && (
           <section className="w-full">
             <Invoices />
