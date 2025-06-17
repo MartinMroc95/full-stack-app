@@ -3,52 +3,10 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 import { Check } from 'lucide-react'
 import { useRouter } from 'next/router'
 import { cn } from 'src/lib/utils'
-import CheckoutButton from 'components/Subscription/CheckoutButton'
+import CheckoutButton from 'components/common/EditForm/Subscription/CheckoutButton'
 import { Button } from 'components/ui/button'
 import { Card, CardContent, CardHeader } from 'components/ui/card'
-
-// Pricing tiers with features
-const pricingTiers = [
-  {
-    name: 'Basic',
-    tier: 'basic',
-    price: '$9.99',
-    period: '/month',
-    description: 'Perfect for individual users',
-    features: ['Up to 10 cars', 'Basic analytics', 'Email support', '1 user account'],
-  },
-  {
-    name: 'Pro',
-    tier: 'pro',
-    price: '$29.99',
-    period: '/month',
-    description: 'Ideal for small businesses',
-    features: [
-      'Up to 100 cars',
-      'Advanced analytics',
-      'Priority email support',
-      '5 user accounts',
-      'Custom exports',
-    ],
-    featured: true,
-  },
-  {
-    name: 'Premium',
-    tier: 'premium',
-    price: '$79.99',
-    period: '/month',
-    description: 'For enterprises and large fleets',
-    features: [
-      'Unlimited cars',
-      'Premium analytics',
-      '24/7 phone support',
-      'Unlimited user accounts',
-      'API access',
-      'Custom integrations',
-      'Dedicated account manager',
-    ],
-  },
-]
+import { pricingTiers } from './constants'
 
 const PricingPage = () => {
   const router = useRouter()
@@ -98,10 +56,7 @@ const PricingPage = () => {
               {!isLoading && (
                 <div className="mb-6">
                   {user ? (
-                    <CheckoutButton
-                      tier={tier.tier as 'basic' | 'pro' | 'premium'}
-                      label="Subscribe Now"
-                    />
+                    <CheckoutButton tier={tier.tier} label="Subscribe Now" />
                   ) : (
                     <Button
                       variant={tier.featured ? 'default' : 'outline'}

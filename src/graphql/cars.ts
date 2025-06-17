@@ -22,6 +22,8 @@ export const GetUserCarsQuery = gql`
           enginePower
           price
           description
+          createdAt
+          updatedAt
         }
       }
     }
