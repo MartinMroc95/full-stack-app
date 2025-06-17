@@ -135,7 +135,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=''
 2. Install dependencies:
 
    ```bash
-   npm install
+   yarn install
    ```
 
 3. Set up environment variables:
@@ -165,20 +165,20 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=''
 
 7. Start the development server:
    ```bash
-   npm run dev
+   yarn dev
    ```
 
 ## Development
 
 ### Available Scripts
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run test` - Run Playwright tests
-- `npm run test:ui` - Run tests with UI
-- `npm run test:debug` - Run tests in debug mode
+- `yarn dev` - Start development server with hot reload
+- `yarn build` - Build for production
+- `yarn start` - Start production server
+- `yarn lint` - Run ESLint
+- `yarn test` - Run Playwright tests
+- `yarn test:ui` - Run tests with UI
+- `yarn test:debug` - Run tests in debug mode
 
 ### Code Style
 
@@ -216,26 +216,6 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=''
 └── tests/             # Test files
 ```
 
-## Testing
-
-### Unit Tests
-
-- Component testing with React Testing Library
-- API testing with Jest
-- Database testing with Prisma
-
-### Integration Tests
-
-- API integration tests
-- Database integration tests
-- Authentication flow tests
-
-### E2E Tests
-
-- User flow testing with Playwright
-- Cross-browser testing
-- Mobile responsiveness testing
-
 ## Deployment
 
 ### Production Build
@@ -243,12 +223,12 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=''
 1. Build the application:
 
    ```bash
-   npm run build
+   yarn build
    ```
 
 2. Start the production server:
    ```bash
-   npm run start
+   yarn start
    ```
 
 ### Environment Setup
@@ -257,14 +237,6 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=''
 - Set up production database
 - Configure Auth0 production settings
 - Set up Stripe production webhooks
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## License
 

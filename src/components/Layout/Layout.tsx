@@ -57,7 +57,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 const isActive = router.pathname === route.url
                 const itemTitle = route.title
                 return (
-                  <SidebarMenuItem>
+                  <SidebarMenuItem key={route.key}>
                     <SidebarMenuButton asChild isActive={isActive} tooltip={itemTitle}>
                       <Link href={route.url}>
                         <span className="group-data-[state=collapsed]:hidden">{itemTitle}</span>
